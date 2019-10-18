@@ -3,3 +3,6 @@
 
 # CSV Files
 *.csv
+
+# Python Cache Files
+*.pyc
