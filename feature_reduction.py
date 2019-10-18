@@ -1,4 +1,3 @@
-
 from sklearn import decomposition
 from sklearn.ensemble import RandomForestClassifier
 import scipy.stats as ss
@@ -6,14 +5,11 @@ import numpy as np
 
 class FeatureReduction:
 
-    def __init__(self, data_X, data_y, feature_label, no_of_features):
+    def __init__(self, data_X, data_y, feature_label, no_of_features = 10):
         self.data_X = data_X
         self.data_y = data_y
         self.feature_label = feature_label
         self.no_of_features = no_of_features
-
-        dict_main = locals()
-        logger.debug("\n\n\n\nFEATURE REDUCTION:\n\n {}\n\n".format(dict_main))
 
     def pca(self, keep_info):
 
@@ -66,24 +62,7 @@ class FeatureReduction:
 
         reduced_feature_set = np.array([selected_data[:,i] for i in range(selected_data.shape[1])])
 
-        feat_sel_without_Z = []
-
-        for feat in feat_sel:
-            if feat[-1] != 'Z':
-                feat_sel_without_Z.append(feat)
-
-        print('\n\n\nIMPORTANT FEATURES (without Z):\n\n', feat_sel_without_Z, '\n\n\n')
-
-        logger.debug('\n\n\nIMPORTANT FEATURES (without Z):\n\n {} \n\n\n'.format(feat_sel_without_Z))
-
-
-        indices_without_Z = [self.feature_label.index(feature_) for feature_ in feat_sel_without_Z]
-
-        selected_data_without_Z = np.array([self.data_X[:,i] for i in indices_without_Z])
-
-        reduced_feature_set_without_Z = np.array([selected_data_without_Z[:,i] for i in range(selected_data_without_Z.shape[1])])
-
-        return reduced_feature_set, feat_sel, reduced_feature_set_without_Z, feat_sel_without_Z
+        return reduced_feature_set, feat_sel
 
 
 
