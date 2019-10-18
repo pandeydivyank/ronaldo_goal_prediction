@@ -16,6 +16,7 @@ class DatasetGeneration:
         self.max_features = max_features
         self.keep_info = keep_info
 
+
         if list_of_removals is None:
             self.list_of_removals = [
                 'match_event_id',
@@ -85,7 +86,6 @@ class DatasetGeneration:
     def train_test_split(self):
 
         reduced_feature_set, selected_features = self.reduce_features(keep_info = self.keep_info, max_features = self.max_features)
-
 
         X_train, X_test, y_train, y_test = train_test_split(reduced_feature_set, self.target_creation(), test_size = self.split_ratio, random_state = self.random_state)
 
