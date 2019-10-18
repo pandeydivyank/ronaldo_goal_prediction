@@ -1,0 +1,90 @@
+
+from sklearn import decomposition
+from sklearn.ensemble import RandomForestClassifier
+import scipy.stats as ss
+import numpy as np
+
+class FeatureReduction:
+
+    def __init__(self, data_X, data_y, feature_label, no_of_features):
+        self.data_X = data_X
+        self.data_y = data_y
+        self.feature_label = feature_label
+        self.no_of_features = no_of_features
+
+        dict_main = locals()
+        logger.debug("\n\n\n\nFEATURE REDUCTION:\n\n {}\n\n".format(dict_main))
+
+    def pca(self, keep_info):
+
+        pca = decomposition.PCA(keep_info)
+        pca.fit(np.nan_to_num(self.data_X, nan = 0))
+
+        feature_selected = []
+        for a, b in zip(pca.components_, pca.explained_variance_ratio_):
+            feature_selected.append([self.feature_label[list(ss.rankdata(np.abs(1/a))).index(i+1)] for i in range(self.no_of_features)])
+            break
+
+        return feature_selected[0]
+
+    def random_forest(self):
+        rf = RandomForestClassifier()
+        rf.fit(self.data_X, self.data_y)
+
+        feature_with_impurity =  (sorted(zip(map(lambda x: round(x, 4), rf.feature_importances_), self.feature_label), reverse=True))
+
+        feature_selected = feature_with_impurity[:self.no_of_features]
+
+        return feature_selected
+
+    def feature_selection(self, keep_info = 0.95):
+
+        feature_selected =[
+        self.pca(keep_info = keep_info),
+        self.random_forest()
+        ]
+
+        feat_sel = []
+
+        i = 0
+        for method in feature_selected:
+            for feature in method:
+                if feature not in feat_sel:
+                    if i == 1:
+                        feat_sel.append(feature[1])
+                    else:
+                        feat_sel.append(feature)
+            i += 1
+
+        print('\n\n\nIMPORTANT FEATURES:\n\n', feat_sel, '\n\n\n')#
+
+        logger.debug('\n\n\nIMPORTANT FEATURES:\n\n {} \n\n\n'.format(feat_sel))
+
+        indices = [self.feature_label.index(feature_) for feature_ in feat_sel]
+
+        selected_data = np.array([self.data_X[:,i] for i in indices])
+
+        reduced_feature_set = np.array([selected_data[:,i] for i in range(selected_data.shape[1])])
+
+        feat_sel_without_Z = []
+
+        for feat in feat_sel:
+            if feat[-1] != 'Z':
+                feat_sel_without_Z.append(feat)
+
+        print('\n\n\nIMPORTANT FEATURES (without Z):\n\n', feat_sel_without_Z, '\n\n\n')
+
+        logger.debug('\n\n\nIMPORTANT FEATURES (without Z):\n\n {} \n\n\n'.format(feat_sel_without_Z))
+
+
+        indices_without_Z = [self.feature_label.index(feature_) for feature_ in feat_sel_without_Z]
+
+        selected_data_without_Z = np.array([self.data_X[:,i] for i in indices_without_Z])
+
+        reduced_feature_set_without_Z = np.array([selected_data_without_Z[:,i] for i in range(selected_data_without_Z.shape[1])])
+
+        return reduced_feature_set, feat_sel, reduced_feature_set_without_Z, feat_sel_without_Z
+
+
+
+
