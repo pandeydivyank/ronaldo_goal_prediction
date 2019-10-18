@@ -9,7 +9,7 @@ class DatasetGeneration:
         split_ratio = 0.2, random_state = 0, max_features = 10, keep_info = 0.95,
         list_of_removals = None, nan_removal_method = 'by_mean'):
 
-        self.data = data
+        self.data = data[pd.notnull(data['is_goal'])]
         self.split_ratio = split_ratio
         self.random_state = random_state
         self.nan_removal_method = nan_removal_method
@@ -53,11 +53,10 @@ class DatasetGeneration:
     def categorical_conversion(self):
 
         data = self.nan_removal(method = self.nan_removal_method)
-
         categorical_variable = [key for key in dict(data.dtypes)
              if dict(data.dtypes)[key] in ['object'] ]
 
-        print(categorical_variable)
+        #print(categorical_variable)
 
         for feature in categorical_variable:
             print('FEATURE: ', feature)
@@ -66,6 +65,8 @@ class DatasetGeneration:
             data = data.drop(feature, axis = 1)
             print('DATA SHAPE (BO): ', data.shape)
             # Join the encoded df
+            if feature == 'type_of_combined_shot':
+                one_hot.columns = [str(col) + '_x' for col in one_hot.columns]
             data = data.join(one_hot)
             print('DATA SHAPE (AO): ', data.shape)
 
