@@ -2,51 +2,55 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
 class DatasetGeneration:
-    
-    def __init__(self, data, list_of_removals = None, split_ratio = 0.2, random_state = 0):
+
+    def __init__(self, data, list_of_removals = None, split_ratio = 0.2, random_state = 0, nan_removal_method = 'by_mean'):
         self.data = data
         self.split_ratio = split_ratio
         self.random_state = random_state
+        self.nan_removal_method = nan_removal_method
+
         if list_of_removals is None:
             self.list_of_removals = [
-                'match_event_id', 
-                'is_goal', 
-                'shot_id_number', 
-                'match_id', 
+                'match_event_id',
+                'is_goal',
+                'shot_id_number',
+                'match_id',
                 'team_id',
-                'game_season', 
-                'team_name', 
-                'date_of_game', 
-                'lat/lng', 
+                'game_season',
+                'team_name',
+                'date_of_game',
+                'lat/lng',
                 'home/away'
             ]
         else:
             self.list_of_removals = list_of_removals
-            
+
     def label_creation(self):
         return self.data['is_goal'].to_numpy()
-    
+
     def dataset_creation(self):
         return self.data.drop(self.list_of_removals, axis = 1)
-    
+
     def nan_removal(self, method = 'by_mean'):
-        
+
         data = self.dataset_creation()
-        
+
         if method is 'by_mean':
             data = data.fillna(data.mean())
         else:
             pass
-        
+
         return data
-    
+
     def categorical_conversion(self):
-        
-        data = self.nan_removal()
-        
+
+        data = self.nan_removal(method = self.nan_removal_method)
+
         categorical_variable = [key for key in dict(data.dtypes)
              if dict(data.dtypes)[key] in ['object'] ]
-        
+
+        print(categorical_variable)
+
         for feature in categorical_variable:
             print('FEATURE: ', feature)
             one_hot = pd.get_dummies(data[feature])
@@ -56,11 +60,11 @@ class DatasetGeneration:
             # Join the encoded df
             data = data.join(one_hot)
             print('DATA SHAPE (AO): ', data.shape)
-            
-        return data.to_numpy()
-    
+
+        return data
+
     def train_test_split(self):
-        X_train, X_test, y_train, y_test = train_test_split(self.categorical_conversion(), self.label_creation(), test_size = self.split_ratio, random_state = self.random_state)
+        X_train, X_test, y_train, y_test = train_test_split(self.categorical_conversion().to_numpy(), self.label_creation(), test_size = self.split_ratio, random_state = self.random_state)
         #
         obj = StandardScaler()
 
@@ -79,9 +83,16 @@ class DatasetGeneration:
         validation_data['X'] = obj.fit_transform(validation_data['X'])
 
         return train_data, validation_data
-    
+
+    def feature_label_creation(self):
+        return list(self.categorical_conversion().columns)
+
+
     def dataset_generation(self):
-        return self.train_test_split()
+        train_data, validation_data = self.train_test_split()
+        feature_label = self.feature_label_creation()
+
+        return train_data, validation_data, feature_label
 
 
 if __name__ == "__main__":
@@ -89,11 +100,10 @@ if __name__ == "__main__":
 
     data = pd.read_csv('./data.csv')
     obj = DatasetGeneration(data = data)
-    train_data, validation_data = obj.dataset_generation()
+    train_data, validation_data, feature_label = obj.dataset_generation()
 
-    print('TRAIN DATA SHAPE: ', train_data.shape, 'VALIDATION DATA SHAPE: ', validation_data.shape)
-        
-    
+    print('TRAIN DATA SHAPE: ', train_data.shape, 'VALIDATION DATA SHAPE: ', validation_data.shape, 'FEATURE LABELS: ', feature_label)
 
-        
-        
+
+
+
