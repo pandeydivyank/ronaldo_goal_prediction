@@ -28,7 +28,8 @@ class DatasetGeneration:
                 'team_name',
                 'date_of_game',
                 'lat/lng',
-                'home/away'
+                'home/away',
+                'Unnamed: 0'
             ]
         else:
             self.list_of_removals = list_of_removals
@@ -59,16 +60,13 @@ class DatasetGeneration:
         #print(categorical_variable)
 
         for feature in categorical_variable:
-            print('FEATURE: ', feature)
             one_hot = pd.get_dummies(data[feature])
             # Drop column B as it is now encoded
             data = data.drop(feature, axis = 1)
-            print('DATA SHAPE (BO): ', data.shape)
             # Join the encoded df
             if feature == 'type_of_combined_shot':
                 one_hot.columns = [str(col) + '_x' for col in one_hot.columns]
             data = data.join(one_hot)
-            print('DATA SHAPE (AO): ', data.shape)
 
         return data
 
@@ -123,7 +121,7 @@ if __name__ == "__main__":
     obj = DatasetGeneration(data = data)
     train_data, validation_data, feature_label = obj.dataset_generation()
 
-    print('TRAIN DATA SHAPE: ', train_data.shape, 'VALIDATION DATA SHAPE: ', validation_data.shape, 'FEATURE LABELS: ', feature_label)
+    print('TRAIN DATA SHAPE: ', train_data['X'].shape, 'VALIDATION DATA SHAPE: ', validation_data['X'].shape, 'FEATURE LABELS: ', feature_label)
 
 
 
