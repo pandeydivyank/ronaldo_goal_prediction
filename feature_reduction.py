@@ -32,6 +32,7 @@ class FeatureReduction:
 
         feature_selected = feature_with_impurity[:self.no_of_features]
 
+
         return feature_selected
 
     def feature_selection(self, keep_info = 0.95):
@@ -46,16 +47,15 @@ class FeatureReduction:
         i = 0
         for method in feature_selected:
             for feature in method:
-                if feature not in feat_sel:
-                    if i == 1:
+                if i == 1:
+                    if feature[1] not in feat_sel:
                         feat_sel.append(feature[1])
-                    else:
+                else:
+                    if feature not in feat_sel:
                         feat_sel.append(feature)
             i += 1
 
-        print('\n\n\nIMPORTANT FEATURES:\n\n', feat_sel, '\n\n\n')#
-
-        logger.debug('\n\n\nIMPORTANT FEATURES:\n\n {} \n\n\n'.format(feat_sel))
+        print('\n\n\nIMPORTANT FEATURES:\n\n', feat_sel, '\n\n\n')
 
         indices = [self.feature_label.index(feature_) for feature_ in feat_sel]
 
