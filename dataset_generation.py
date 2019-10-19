@@ -1,6 +1,7 @@
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from feature_reduction import FeatureReduction
+import pandas as pd
 
 class DatasetGeneration:
 
