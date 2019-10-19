@@ -12,7 +12,8 @@ class Main:
 
         model_arch = ModelArchitectures(
             train_data = train_data,
-            validation_data = validation_data
+            validation_data = validation_data,
+            verbose = True
             )
 
         svm_matrix = model_arch.svm_classifier()
