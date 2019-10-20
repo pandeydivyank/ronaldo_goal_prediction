@@ -1,10 +1,15 @@
+
 from sklearn import decomposition
 from sklearn.ensemble import RandomForestClassifier
 import scipy.stats as ss
 import numpy as np
 import pandas as pd
 
-class FeatureReduction:
+class FeatureSelection:
+    """
+    Will select important features from the engineered data
+
+    """
 
     def __init__(self, data_X, data_y, feature_label, no_of_features = 10):
         self.data_X = data_X
@@ -26,7 +31,7 @@ class FeatureReduction:
 
     def random_forest(self):
         rf = RandomForestClassifier()
-        rf.fit(self.data_X, self.data_y)
+        rf.fit(np.nan_to_num(self.data_X, nan = 0), self.data_y)
 
         feature_with_impurity =  (sorted(zip(map(lambda x: round(x, 4), rf.feature_importances_), self.feature_label), reverse=True))
 
@@ -61,9 +66,12 @@ class FeatureReduction:
 
         selected_data = np.array([self.data_X[:,i] for i in indices])
 
-        reduced_feature_set = np.array([selected_data[:,i] for i in range(selected_data.shape[1])])
 
-        return reduced_feature_set, feat_sel
+        selected_feature_set = np.array([selected_data[:,i] for i in range(selected_data.shape[1])])
+
+        print(list(selected_feature_set[0, :]))
+
+        return selected_feature_set, feat_sel
 
 
 

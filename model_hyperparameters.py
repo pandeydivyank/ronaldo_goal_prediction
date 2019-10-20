@@ -1,15 +1,24 @@
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
+import numpy as np
 
 class ModelHyperparameters:
 
-    def __init__(self, train_data, validation_data, nfolds = 10, n_jobs = -1, verbose = False):
-        self.train_data = train_data
-        self.validation_data = validation_data
+    def __init__(self, train_data, validation_data, nfolds = 10, n_jobs = -1, verbose = False, grid_search = False):
+        # self.train_data = train_data
+        self.train_data = {}
+        self.train_data['X'] = np.nan_to_num(train_data['X'], nan = 0)
+        self.train_data['y'] = train_data['y']
+
+        self.validation_data = {}
+        self.validation_data['X'] = np.nan_to_num(validation_data['X'], nan = 0)
+        self.validation_data['y'] = validation_data['y']
+
         self.n_jobs = n_jobs
         self.nfolds = nfolds
         self.verbose = verbose
+        self.grid_search = grid_search
 
     def svm_hyperparameter_dictionary(self):
 

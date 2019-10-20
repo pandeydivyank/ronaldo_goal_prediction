@@ -1,9 +1,46 @@
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import train_test_split
 from feature_reduction import FeatureReduction
 import pandas as pd
 
 class DatasetGeneration:
+    """
+                            Raw Data
+                                |
+                          Import Export (Import Data)
+                                |
+                         Data Engineering
+                                |
+                       Feature Engineering
+                                |
+        Feature Selection       |
+                |               |
+                |_______________|
+                                |
+    Dimensionality Reduction    |                  -------> Model Hyperparameter Tuning
+                |               |                 |                     |
+                |_______________|                 |                     |
+                                |                 |                     |
+                        Dataset Generation (Processed Data)     Model Architectures
+                                                        ________________|
+                                                       |
+                                                     Model
+                                                       |     Training
+                                                       |________|
+                                                       |
+                                                       |     Testing
+                                                       |________|
+            Import Export (Export Results)             |
+                          |_____________   ____________|
+                                        | |
+                                        Main (run)
+
+
+
+
+
+
+    """
 
     def __init__(self,
         data,
@@ -60,23 +97,41 @@ class DatasetGeneration:
 
         #print(categorical_variable)
 
+        one_hots = []
+
         for feature in categorical_variable:
             one_hot = pd.get_dummies(data[feature])
+            one_hots.append(one_hot)
             # Drop column B as it is now encoded
             data = data.drop(feature, axis = 1)
             # Join the encoded df
+
+        # ss = StandardScaler()
+        mms = MinMaxScaler()
+        data_scaled = pd.DataFrame(mms.fit_transform(data))
+
+
+        for feature, one_hot in zip(categorical_variable, one_hots):
             if feature == 'type_of_combined_shot':
                 one_hot.columns = [str(col) + '_x' for col in one_hot.columns]
             data = data.join(one_hot)
+            data_scaled = data_scaled.join(one_hot)
 
-        return data
+
+        feature_labels = list(data.columns)
+
+        del data
+
+        return data_scaled.to_numpy(), feature_labels
 
     def reduce_features(self, keep_info, max_features):
 
+        data_X, feature_labels = self.categorical_conversion()
+
         data_reduction = FeatureReduction(
-            data_X = self.categorical_conversion().to_numpy(),
+            data_X = data_X,
             data_y = self.target_creation(),
-            feature_label = self.feature_labels(),
+            feature_label = feature_labels,
             no_of_features = max_features)
 
         reduced_feature_set, selected_features = data_reduction.feature_selection(keep_info = keep_info)
@@ -89,26 +144,23 @@ class DatasetGeneration:
 
         X_train, X_test, y_train, y_test = train_test_split(reduced_feature_set, self.target_creation(), test_size = self.split_ratio, random_state = self.random_state)
 
-        obj = StandardScaler()
 
         train_data = {}
 
         train_data['X'] = X_train
         train_data['y'] = y_train
 
-        train_data['X'] = obj.fit_transform(train_data['X'])
 
         validation_data = {}
 
         validation_data['X'] = X_test
         validation_data['y'] = y_test
 
-        validation_data['X'] = obj.fit_transform(validation_data['X'])
 
         return train_data, validation_data, selected_features
 
-    def feature_labels(self):
-        return list(self.categorical_conversion().columns)
+    # def feature_labels(self):
+    #     return list(self.categorical_conversion().columns)
 
     def dataset_generation(self):
         train_data, validation_data, feature_label = self.train_test_split()
