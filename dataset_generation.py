@@ -5,7 +5,6 @@ import pandas as pd
 
 class DatasetGeneration:
 
-
     def __init__(self,
         data,
         split_ratio = 0.2, random_state = 0, max_features = 10, keep_info = 0.95,

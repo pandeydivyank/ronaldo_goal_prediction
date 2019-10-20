@@ -1,7 +1,8 @@
 from training import Training
 from testing import Testing
+from model_architectures import ModelArchitectures
 
-class Model(Training, Testing):
+class Model(ModelArchitectures, Training, Testing):
     """
     Employ a model
     """
