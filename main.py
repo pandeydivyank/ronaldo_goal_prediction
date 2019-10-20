@@ -4,39 +4,7 @@ from import_export import ImportExport
 import numpy as np
 
 class Main:
-    """
-                            Raw Data
-                                |
-                          Import Export (Import Data)
-                                |
-                         Data Engineering
-                                |
-                       Feature Engineering
-                                |
-        Feature Selection       |
-                |               |
-                |_______________|
-                                |
-    Dimensionality Reduction    |                  -------> Model Hyperparameter Tuning
-                |               |                 |                     |
-                |_______________|                 |                     |
-                                |                 |                     |
-                        Dataset Generation (Processed Data)     Model Architectures
-                                        |        |       ________________|
-                                        |        |      |
-                                        |         --> Model
-                                        |               |     Training
-                                        |               |________|
-                                        |               |
-                                        |__             |     Testing
-                                           |            |________|
-            Import Export (Export Results) |            |
-                          |_____________   |  __________|
-                                        |  | |
-                                        Main (run)
 
-
-    """
     @staticmethod
     def run():
         data = ImportExport.import_csv(file_location = './data_1.csv')
