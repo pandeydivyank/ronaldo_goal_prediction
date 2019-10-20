@@ -4,43 +4,7 @@ from feature_reduction import FeatureReduction
 import pandas as pd
 
 class DatasetGeneration:
-    """
-                            Raw Data
-                                |
-                          Import Export (Import Data)
-                                |
-                         Data Engineering
-                                |
-                       Feature Engineering
-                                |
-        Feature Selection       |
-                |               |
-                |_______________|
-                                |
-    Dimensionality Reduction    |                  -------> Model Hyperparameter Tuning
-                |               |                 |                     |
-                |_______________|                 |                     |
-                                |                 |                     |
-                        Dataset Generation (Processed Data)     Model Architectures
-                                                        ________________|
-                                                       |
-                                                     Model
-                                                       |     Training
-                                                       |________|
-                                                       |
-                                                       |     Testing
-                                                       |________|
-            Import Export (Export Results)             |
-                          |_____________   ____________|
-                                        | |
-                                        Main (run)
 
-
-
-
-
-
-    """
 
     def __init__(self,
         data,
