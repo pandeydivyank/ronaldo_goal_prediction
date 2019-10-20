@@ -16,10 +16,10 @@ Code Flow:
                 |               |
                 |_______________|
                                 |
-    Dimensionality Reduction    |                  -------> Model Hyperparameter Tuning
-                |               |                 |                     |
-                |_______________|                 |                     |
-                                |                 |                     |
+    Dimensionality Reduction    |                            Model Hyperparameter Tuning
+                |               |                                        |
+                |_______________|                                        |
+                                |                                        |
                         Dataset Generation (Processed Data)     Model Architectures
                                         |        |       ________________|
                                         |        |      |
