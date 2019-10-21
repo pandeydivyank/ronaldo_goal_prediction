@@ -1,0 +1,7 @@
+-----Commands to run the docker image------
+
+docker build -t shady:latest .
+docker run shady:latest
+
+
+# This will run main.py in docker's shell
